@@ -16,7 +16,7 @@ class StubProjectRepository() : ProjectRepository{
 
     override suspend fun getFilesInDirectory(uri: Uri): List<File> {
         Log.i("StubProjectRepository", "getFilesInDirectory(${uri}");
-        return emptyList()
+        return listOf(File("Test1"),File("Test2"),File("Test3"))
     }
 
 }
