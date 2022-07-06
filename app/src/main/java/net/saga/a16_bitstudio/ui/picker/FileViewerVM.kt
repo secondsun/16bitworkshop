@@ -1,6 +1,7 @@
 package net.saga.a16_bitstudio.ui.picker
 
 import android.net.Uri
+import android.provider.DocumentsContract
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -9,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import net.saga.a16_bitstudio.data.ProjectRepository
 import net.saga.a16_bitstudio.data.StubProjectRepository
+import net.saga.a16_bitstudio.util.CachingDocumentFile
 import java.io.File
 
 class FileViewerVM(
@@ -19,7 +21,7 @@ class FileViewerVM(
     var directoryUri = mutableStateOf(projectRepository.getDefaultDirectory())
         private set
 
-    var files = mutableStateOf<List<File>>(emptyList())
+    var files = mutableStateOf<List<CachingDocumentFile>>(emptyList())
 
     fun refresh(uri: Uri) {
         viewModelScope.launch {
@@ -29,7 +31,10 @@ class FileViewerVM(
         }
     }
 
-   init {
+    inline fun isDirectory(it: Uri): Boolean = DocumentsContract.isTreeUri(it)
+
+
+    init {
 
        Log.i("PickerViewModel", "Init ${directoryUri.value}")
 

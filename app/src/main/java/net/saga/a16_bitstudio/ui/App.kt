@@ -35,8 +35,6 @@ fun App(activity: MainActivity, lifecycleOwner: LifecycleOwner = LocalLifecycleO
         factory = FileViewerVM.provideFactory(ContextProjectRepository(activity.applicationContext))
     )
 
-    pickerVM.refresh(pickerVM.directoryUri.value.buildUpon().appendPath("/Game").build())
-
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) {
         if (it != null) {
             contentResolver.takePersistableUriPermission(it, takeFlags)

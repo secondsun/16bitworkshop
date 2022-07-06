@@ -18,7 +18,7 @@ fun FileViewer(viewModel: FileViewerVM = viewModel()) {
 
             viewModel.files.value.map {
                 FileLineItem(it) {
-                    if (it.toFile().isDirectory) {
+                    if (viewModel.isDirectory(it)) {
                         Log.i("ProjectPricker", "ProjectPicker Directory on Click ${it}")
                         viewModel.refresh(it)
                     }
