@@ -4,22 +4,25 @@ import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import net.saga.a16_bitstudio.MainActivity
 import net.saga.a16_bitstudio.data.ContextProjectRepository
+import net.saga.a16_bitstudio.ui.leftrail.LeftRail
 import net.saga.a16_bitstudio.ui.picker.FileViewerVM
 import net.saga.a16_bitstudio.ui.theme.SixteenbitStudioTheme
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,12 +48,13 @@ fun App(activity: MainActivity, lifecycleOwner: LifecycleOwner = LocalLifecycleO
     SixteenbitStudioTheme {
         // A surface container using the 'background' color from the theme
         Scaffold(topBar = { StudioAppBar(startOpenIntent = { launcher.launch(pickerVM.directoryUri.value) }) }) {
-            Column(
+            Row(
                 modifier = Modifier
                     .padding(it)
                     .fillMaxSize()
             ) {
-                FileViewer(pickerVM)
+                LeftRail(pickerVM)
+                        //FileViewer(pickerVM)
             }
         }
     }
