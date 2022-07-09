@@ -23,11 +23,7 @@ fun LeftRail(filesVM : FileViewerVM = viewModel()) {
     val filesOpen = remember {
         mutableStateOf(false)
     }
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .background(Color.Blue)) {
+
         Column(
             Modifier
                 .background(Color.Red)
@@ -37,6 +33,6 @@ fun LeftRail(filesVM : FileViewerVM = viewModel()) {
             if (filesOpen.value) {
                 FileViewer()
             }
-        }
+
     }
 }

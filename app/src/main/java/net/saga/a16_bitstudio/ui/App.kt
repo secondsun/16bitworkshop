@@ -1,5 +1,6 @@
 package net.saga.a16_bitstudio.ui
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -11,6 +12,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -19,35 +21,40 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import net.saga.a16_bitstudio.MainActivity
 import net.saga.a16_bitstudio.data.ContextProjectRepository
+import net.saga.a16_bitstudio.ui.import_dialog.ImportDialog
 import net.saga.a16_bitstudio.ui.leftrail.LeftRail
 import net.saga.a16_bitstudio.ui.picker.FileViewerVM
 import net.saga.a16_bitstudio.ui.theme.SixteenbitStudioTheme
+import net.saga.a16_bitstudio.util.OpenDocumentTreeWithPersistPermission
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun App(activity: MainActivity, lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current) {
+fun App(context: Context = LocalContext.current) {
 
-    val contentResolver = activity.contentResolver
-
-    val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
-            Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-
+    val contentResolver = context.contentResolver
+    val showImportDialog = remember {
+        mutableStateOf(false)
+    }
     var pickerVM = viewModel(
         modelClass = FileViewerVM::class.java,
-        factory = FileViewerVM.provideFactory(ContextProjectRepository(activity.applicationContext))
+        factory = FileViewerVM.provideFactory(ContextProjectRepository(context.applicationContext))
     )
 
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) {
+    val launcher = rememberLauncherForActivityResult(OpenDocumentTreeWithPersistPermission()) {
         if (it != null) {
+            val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+
             contentResolver.takePersistableUriPermission(it, takeFlags)
+
             pickerVM.refresh(it)
         }
     }
 
     SixteenbitStudioTheme {
         // A surface container using the 'background' color from the theme
-        Scaffold(topBar = { StudioAppBar(startOpenIntent = { launcher.launch(pickerVM.directoryUri.value) }) }) {
+        Scaffold(topBar = { StudioAppBar(startOpenIntent = {showImportDialog.value = true}) }) {
             Row(
                 modifier = Modifier
                     .padding(it)
@@ -57,6 +64,9 @@ fun App(activity: MainActivity, lifecycleOwner: LifecycleOwner = LocalLifecycleO
                         //FileViewer(pickerVM)
             }
         }
+        ImportDialog(open = showImportDialog.value,
+            onDismissRequest = {showImportDialog.value = false},
+            onImportFromAndroid = { launcher.launch(pickerVM.directoryUri.value);showImportDialog.value = false } )
     }
 
 }

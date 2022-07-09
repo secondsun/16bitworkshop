@@ -2,6 +2,7 @@ package net.saga.a16_bitstudio.data
 
 import android.content.ContentResolver
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.provider.DocumentsContract
 import android.util.Log
@@ -22,13 +23,13 @@ class ContextProjectRepository(
     private val contentResolver: ContentResolver = context.contentResolver,
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ProjectRepository {
-    override fun getDefaultDirectory(): Uri {
-        Log.i(
-            "ContextProjectRepository",
-            "getDefaultDirectory ${context.getExternalFilesDir(null)}"
-        )
 
-        return Uri.fromFile(context.getExternalFilesDir(null) ?: context.filesDir)
+    private val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+            Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+
+
+    override fun getDefaultDirectory(): Uri {
+        return Uri.parse("content://com.android.externalstorage.documents/tree/primary%3AMovie")
     }
 
     override suspend fun getFilesInDirectory(uri: Uri): List<CachingDocumentFile> =
@@ -41,7 +42,7 @@ class ContextProjectRepository(
 
                 Log.i("ContextProjectRepository", "getFilesInDirectory ${uri}")
                 val documentsTree = DocumentFile.fromTreeUri(context, uri)
-                if (documentsTree != null) {
+                if (documentsTree != null && documentsTree.canRead()) {
                     val childDocuments = documentsTree.listFiles().toCachingList()
                     childDocuments.sortedBy { it.name }
                 } else {
