@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">16-bit Studio</string>
+    <string name="git_notification_channel_id" >Git Download</string>
+    <string name="git_notification_title" >Git Download</string>
+    <string name="git_cancel_download">Cancel Download</string>
 </resources>
