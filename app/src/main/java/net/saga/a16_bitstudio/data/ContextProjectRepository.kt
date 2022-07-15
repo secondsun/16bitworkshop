@@ -20,16 +20,12 @@ import java.io.FileDescriptor
 
 class ContextProjectRepository(
     val context: Context,
-    private val contentResolver: ContentResolver = context.contentResolver,
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ProjectRepository {
 
-    private val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
-            Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-
 
     override fun getDefaultDirectory(): Uri {
-        return Uri.parse("content://com.android.externalstorage.documents/tree/primary%3AMovie")
+        return Uri.parse("content://com.android.externalstorage.documents/tree/primary%3ADownload%2FGame")
     }
 
     override suspend fun getFilesInDirectory(uri: Uri): List<CachingDocumentFile> =
